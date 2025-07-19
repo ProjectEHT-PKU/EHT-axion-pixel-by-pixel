@@ -6,6 +6,9 @@ def move_file(to_path,from_path='output/'):
     dir_files = os.listdir(from_path)
     if os.path.exists(to_path) is False:
         os.makedirs(to_path)
+    if not os.path.exists(os.path.join(to_path,"figures")):
+        os.makedirs(os.path.join(to_path,"figures"))
+    os.system(f"mv figures/* {os.path.join(to_path,'figures')}")
     for file in dir_files:
         file_path = os.path.join(from_path,file)
         if os.path.isfile(file_path):
