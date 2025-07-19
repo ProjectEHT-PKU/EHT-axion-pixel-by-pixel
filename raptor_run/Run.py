@@ -117,7 +117,7 @@ if __name__=='__main__':
         for axion_omega in axion_omega_list:
             for GRMHD_DATA_FILE in GRMHD_DATA_FILES:
                 try:
-                    data_save_dirname=str(axion_omega)+"/"+GRMHD_DATA_FILE+"_high_res"
+                    data_save_dirname=str(axion_omega)+"/"+os.path.basename(GRMHD_DATA_FILE)+"_high_res"
                     params_json=deepcopy(PARAMS_JSON)
                     params_json["AXION_OMEGA"]=axion_omega
                     params_json["IMG_WIDTH"]=HIGH_RESOLUTION
