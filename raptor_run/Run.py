@@ -20,7 +20,8 @@ CAM_SIZE = 46.2261
 RESOLUTION = 100
 
 # high resolution figure will be copied to result/data_save_dirname
-HIGH_RESOLUTION = 8 * RESOLUTION
+HIGH_RESOLUTION = 4 * RESOLUTION
+RUN_HIGH_RESOLUTION = False
 
 OUTPUT_DIR = "../raptor_output"
 
@@ -89,8 +90,8 @@ if __name__=='__main__':
     GRMHD_DATA_FILES=GRMHD_DATA_FILES[100:]
     # loop for grmhd time
     error_list=[]
-
-    for axion_omega in [0.3,0.35,0.4,0.45]:
+    axion_omega_list=[0.3,0.25,0.2,0.15,0.1]
+    for axion_omega in axion_omega_list:
         for GRMHD_DATA_FILE in GRMHD_DATA_FILES:
             try:
                 data_save_dirname=str(axion_omega)+"/"+os.path.basename(GRMHD_DATA_FILE)
@@ -109,25 +110,26 @@ if __name__=='__main__':
         open(f"{axion_omega} done", "w").close()
 
     # loop for grmhd time (high resolution)
-    for axion_omega in [0.3,0.35,0.4,0.45]:
-        for GRMHD_DATA_FILE in GRMHD_DATA_FILES:
-            try:
-                data_save_dirname=str(axion_omega)+"/"+GRMHD_DATA_FILE+"_high_res"
-                params_json=deepcopy(PARAMS_JSON)
-                params_json["AXION_OMEGA"]=axion_omega
-                params_json["IMG_WIDTH"]=HIGH_RESOLUTION
-                params_json["IMG_HEIGHT"]=HIGH_RESOLUTION
-                Run(params_json,GRMHD_DATA_FILE,data_save_dirname)
-                
-                params_json["AXION_NORM"]=0.1
-                
-                for phase in range(16):
-                    params_json["AXION_PHASE"]=phase
+    if RUN_HIGH_RESOLUTION == True:
+        for axion_omega in axion_omega_list:
+            for GRMHD_DATA_FILE in GRMHD_DATA_FILES:
+                try:
+                    data_save_dirname=str(axion_omega)+"/"+GRMHD_DATA_FILE+"_high_res"
+                    params_json=deepcopy(PARAMS_JSON)
+                    params_json["AXION_OMEGA"]=axion_omega
+                    params_json["IMG_WIDTH"]=HIGH_RESOLUTION
+                    params_json["IMG_HEIGHT"]=HIGH_RESOLUTION
                     Run(params_json,GRMHD_DATA_FILE,data_save_dirname)
-            except Exception as e:
-                error_list.append(f"{e}")
-                print(e)
-        open(f"{axion_omega} done", "w").close()
+                    
+                    params_json["AXION_NORM"]=0.1
+                    
+                    for phase in range(16):
+                        params_json["AXION_PHASE"]=phase
+                        Run(params_json,GRMHD_DATA_FILE,data_save_dirname)
+                except Exception as e:
+                    error_list.append(f"{e}")
+                    print(e)
+            open(f"{axion_omega} done", "w").close()
 
     errorlog = open("log_run_error.txt", 'w', encoding='utf-8')
     errorlog.write("\n".join(error_list))
